@@ -42,17 +42,31 @@
         </dependency>
 
         <!-- OmniFaces dependencies. -->
+        
         <dependency>
             <groupId>org.omnifaces</groupId>
-            <artifactId>omniutils</artifactId>
-            <version>0.12</version>
+            <artifactId>omnibeans</artifactId>
+            <version>${project.version}</version>
         </dependency>
-
+        
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omniservices</artifactId>
             <version>0.2-SNAPSHOT</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.omnifaces</groupId>
+            <artifactId>omniservices</artifactId>
+            <version>0.2-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.omnifaces</groupId>
+            <artifactId>omniutils</artifactId>
+            <version>0.12</version>
+        </dependency>
+        
 
         <!-- Test dependencies. -->
         <dependency>

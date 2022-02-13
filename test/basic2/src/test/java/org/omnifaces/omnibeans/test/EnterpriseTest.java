@@ -23,18 +23,14 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.omnifaces.services.pooled.PooledExtension;
 
 import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
-
-import jakarta.enterprise.inject.spi.Extension;
 
  @ExtendWith(ArquillianExtension.class)
  public class EnterpriseTest {
@@ -49,18 +45,14 @@ import jakarta.enterprise.inject.spi.Extension;
          return create(WebArchive.class)
                  .addAsManifestResource(INSTANCE, "beans.xml")
                  .addClasses(AsyncBean.class, SingletonBean.class, PublicServlet2.class)
-                 .addAsLibraries(create(JavaArchive.class)
-                         .addAsManifestResource(INSTANCE, "beans.xml")
-                         .addAsServiceProvider(Extension.class, PooledExtension.class)
-                         .addPackages(true, "org.omnifaces.services.asynchronous")
-                         .addPackages(true, "org.omnifaces.services.pooled")
-                         .addPackages(true, "org.omnifaces.services.util")
-                 )
                  .addAsLibraries(Maven.resolver()
                          .loadPomFromFile("pom.xml")
-                         .resolve("org.omnifaces:omniutils")
+                         .resolve(
+                             "org.omnifaces:omnibeans",
+                             "org.omnifaces:omniservices",
+                             "org.omnifaces:omniutils")
                          .withoutTransitivity()
-                         .asSingleFile())
+                         .asFile())
                          ;
      }
      
