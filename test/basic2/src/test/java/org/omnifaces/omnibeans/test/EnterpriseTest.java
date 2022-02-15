@@ -42,7 +42,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 
      @Deployment(testable = false)
      public static WebArchive createDeployment() {
-         return create(WebArchive.class)
+         WebArchive webArchive = create(WebArchive.class)
                  .addAsManifestResource(INSTANCE, "beans.xml")
                  .addClasses(AsyncBean.class, SingletonBean.class, PublicServlet2.class)
                  .addAsLibraries(Maven.resolver()
@@ -51,9 +51,13 @@ import com.gargoylesoftware.htmlunit.WebClient;
                              "org.omnifaces:omnibeans",
                              "org.omnifaces:omniservices",
                              "org.omnifaces:omniutils")
-                         .withoutTransitivity()
+                         .withTransitivity()
                          .asFile())
                          ;
+         
+         System.out.println(webArchive.toString(true));
+         
+         return webArchive;
      }
      
      @BeforeEach

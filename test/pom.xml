@@ -11,10 +11,11 @@
     <artifactId>test-pom</artifactId>
     <packaging>pom</packaging>
 
-    <name>OmniBeans</name>
+    <name>OmniBeans Test Parent</name>
 
     <modules>
-        <module>basic</module>
+    <!--
+        <module>basic</module> -->
         <module>basic2</module>
     </modules>
 

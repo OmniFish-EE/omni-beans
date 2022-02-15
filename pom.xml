@@ -7,7 +7,7 @@
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>OmniBeans</name>
+    <name>OmniBeans Parent</name>
     <description>Implementation of Jakarta Enterprise Beans using CDI</description>
     <url>https://github.com/omnifaces/omnibeans</url>
     <organization>
@@ -58,6 +58,7 @@
 
     <modules>
         <module>impl</module>
+        <module>test</module>
     </modules>
 
 </project>
