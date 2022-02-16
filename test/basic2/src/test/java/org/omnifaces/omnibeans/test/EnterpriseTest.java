@@ -63,6 +63,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
      @BeforeEach
      public void setup() {
          webClient = new WebClient();
+         webClient.getOptions().setTimeout(0);
      }
 
      
