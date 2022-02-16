@@ -56,13 +56,13 @@ public class PublicServlet2 extends HttpServlet {
     
     public void testAsync(PrintWriter writer) throws ExecutionException, InterruptedException {
         Future<Integer> resultFuture = asyncBean.multiply(3, 4);
-        writer.write("async initially done: " + resultFuture.isDone());
+        writer.write("async initially done: " + resultFuture.isDone() + "\n");
 
         while (!resultFuture.isDone()) {
             Thread.sleep(10);
         }
 
-        writer.write("async outcome: " + resultFuture.get());
+        writer.write("async outcome: " + resultFuture.get() + "\n");
     }
 
 //    public void testSingleton1() throws InterruptedException {

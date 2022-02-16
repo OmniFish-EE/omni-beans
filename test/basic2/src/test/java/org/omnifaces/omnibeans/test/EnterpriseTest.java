@@ -14,7 +14,7 @@
 
 import static org.jboss.shrinkwrap.api.ShrinkWrap.create;
 import static org.jboss.shrinkwrap.api.asset.EmptyAsset.INSTANCE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URL;
@@ -72,9 +72,10 @@ import com.gargoylesoftware.htmlunit.WebClient;
      public void testGet() throws IOException {
          TextPage page = webClient.getPage(base + "servlet2");
          
-         System.out.println("Content: " + page.getContent());
+         System.out.println("Content: \n" + page.getContent());
          
-         assertEquals("my GET", page.getContent());
+         assertTrue(page.getContent().contains("async initially done: false"));
+         assertTrue(page.getContent().contains("async outcome: 12"));
      }
    
 
