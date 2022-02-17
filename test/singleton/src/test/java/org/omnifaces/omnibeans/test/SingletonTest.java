@@ -33,7 +33,7 @@ import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 
  @ExtendWith(ArquillianExtension.class)
- public class EnterpriseTest {
+ public class SingletonTest {
      
      @ArquillianResource
      private URL base;
@@ -44,7 +44,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
      public static WebArchive createDeployment() {
          WebArchive webArchive = create(WebArchive.class)
                  .addAsManifestResource(INSTANCE, "beans.xml")
-                 .addClasses(AsyncBean.class, SingletonBean.class, PublicServlet2.class)
+                 .addClasses(SingletonBean.class, PublicServlet1.class, PublicServlet2.class)
                  .addAsLibraries(Maven.resolver()
                          .loadPomFromFile("pom.xml")
                          .resolve(
@@ -70,12 +70,17 @@ import com.gargoylesoftware.htmlunit.WebClient;
      @Test
      @RunAsClient
      public void testGet() throws IOException {
-         TextPage page = webClient.getPage(base + "servlet2");
+         TextPage page = webClient.getPage(base + "servlet1");
          
          System.out.println("Content: \n" + page.getContent());
          
-         assertTrue(page.getContent().contains("async initially done: false"));
-         assertTrue(page.getContent().contains("async outcome: 12"));
+         assertTrue(page.getContent().contains("singleton 1 outcome: foo"));
+         
+         page = webClient.getPage(base + "servlet2");
+         
+         System.out.println("Content: \n" + page.getContent());
+         
+         assertTrue(page.getContent().contains("singleton 2 outcome: foo bar"));
      }
    
 

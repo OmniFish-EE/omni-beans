@@ -16,6 +16,7 @@ import org.omnifaces.services.pooled.Pooled;
 import org.omnifaces.services.pooled.PooledScopeEnabled;
 
 import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.Extension;
@@ -31,11 +32,24 @@ public class CdiExtension implements Extension {
                .filterMethods(e -> e.isAnnotationPresent(jakarta.ejb.Asynchronous.class))
                .forEach(e -> e.add(org.omnifaces.services.asynchronous.Asynchronous.Literal.INSTANCE));
         
+        // Note: The below replacements are at the moment crude approximations of the
+        //       Enterprise Beans annotations that are being replaced.
+        
         if (event.getAnnotatedType().isAnnotationPresent(Stateless.class)) {
             event.configureAnnotatedType()
+                 // TODO: add transactional support and the ability to configure
+                 //       it like Stateless allows.
                  .add(Pooled.Literal.INSTANCE)
                  .add(PooledScopeEnabled.Literal.INSTANCE);
         }
+        
+        if (event.getAnnotatedType().isAnnotationPresent(jakarta.ejb.Singleton.class)) {
+            event.configureAnnotatedType()
+                  // TODO: add locking
+                 .add(ApplicationScoped.Literal.INSTANCE);
+        }
+        
+        
     }
     
 }

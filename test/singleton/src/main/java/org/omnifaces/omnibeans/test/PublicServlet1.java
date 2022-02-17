@@ -30,51 +30,30 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Arjan Tijms
  * 
  */
-@WebServlet(urlPatterns = "/servlet2")
-public class PublicServlet2 extends HttpServlet {
+@WebServlet(urlPatterns = "/servlet1")
+public class PublicServlet1 extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    
-    @Inject
-    private AsyncBean asyncBean;
 
-    @EJB
+    @Inject
     private SingletonBean singletonBean;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        response.getWriter().write("This is a public servlet \n");
+        response.getWriter().write("This is public servlet 1 \n");
+        
         try {
-            testAsync(response.getWriter());
+            testSingleton1(response.getWriter());
         } catch (Exception e) {
             response.getWriter().write("FAILED");
             e.printStackTrace(response.getWriter());
         }
-
     }
     
-    public void testAsync(PrintWriter writer) throws ExecutionException, InterruptedException {
-        Future<Integer> resultFuture = asyncBean.multiply(3, 4);
-        writer.write("async initially done: " + resultFuture.isDone() + "\n");
-
-        while (!resultFuture.isDone()) {
-            Thread.sleep(10);
-        }
-
-        writer.write("async outcome: " + resultFuture.get() + "\n");
+    public void testSingleton1(PrintWriter writer) throws InterruptedException {
+        singletonBean.addValue("foo");
+        
+        writer.write("singleton 1 outcome: " + singletonBean.getAccumulatedValues() + "\n");
     }
-
-//    public void testSingleton1() throws InterruptedException {
-//        singletonBean.addValue("foo");
-//
-//        assertEquals("foo", singletonBean.getAccumulatedValues());
-//    }
-//
-//    public void testSingleton2() throws InterruptedException {
-//        singletonBean.addValue(" bar");
-//
-//        assertEquals("foo bar", singletonBean.getAccumulatedValues());
-//    }
 
 }

@@ -8,7 +8,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>basic2</artifactId>
+    <artifactId>singleton</artifactId>
     <packaging>war</packaging>
-    <name>Basic enterprise bean test 2</name>
+    <name>Singleton enterprise bean test</name>
 </project>

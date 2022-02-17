@@ -14,9 +14,8 @@
     <name>OmniBeans Test Parent</name>
 
     <modules>
-    <!--
-        <module>basic</module> -->
-        <module>basic2</module>
+        <module>async</module>
+        <module>singleton</module>
     </modules>
 
     <properties>
