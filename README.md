@@ -7,7 +7,10 @@ OmniBeans intends to implement Enterprise Beans Lite using existing Jakarta EE A
 * Jakarta Transactions
 * Jakarta Concurrency
 
-As an initial example, the following bean works on Piranha Micro A (which doens't implement Enterprise Beans)
+As an initial example, the following beans work to some degree on Piranha Micro A (which doens't implement Enterprise Beans)
+
+
+## Async
 
 ```java
 import jakarta.ejb.AsyncResult;
@@ -30,5 +33,31 @@ public class AsyncBean {
         return new AsyncResult<>(number1 * number2);
     }
 
+}
+```
+
+## Singleton
+
+
+```java
+import jakarta.ejb.Singleton;
+import jakarta.annotation.PostConstruct;
+
+@Singleton
+public class SingletonBean {
+    private StringBuilder builder;
+
+    @PostConstruct
+    private void postConstruct() {
+        builder = new StringBuilder();
+    }
+    
+    public void addValue(String value) {
+        builder.append(value);
+    }
+    
+    public String getAccumulatedValues() {
+        return builder.toString();
+    }
 }
 ```
