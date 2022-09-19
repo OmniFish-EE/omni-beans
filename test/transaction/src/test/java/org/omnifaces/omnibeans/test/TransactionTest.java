@@ -13,6 +13,7 @@
  package org.omnifaces.omnibeans.test;
 
 import static org.jboss.shrinkwrap.api.ShrinkWrap.create;
+import static org.jboss.shrinkwrap.api.asset.EmptyAsset.INSTANCE;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -33,7 +34,7 @@ import com.gargoylesoftware.htmlunit.TextPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 
  @ExtendWith(ArquillianExtension.class)
- public class EnterpriseTest {
+ public class TransactionTest {
 
      @ArquillianResource
      private URL base;
@@ -42,15 +43,20 @@ import com.gargoylesoftware.htmlunit.WebClient;
 
      @Deployment(testable = false)
      public static WebArchive createDeployment() {
+         try {
          WebArchive webArchive = create(WebArchive.class)
+                 .addAsManifestResource(INSTANCE, "beans.xml")
+                 .addAsResource("META-INF/persistence.xml")
+                 .addAsWebInfResource(new File("src/main/webapp/WEB-INF", "web.xml"))
                  .addAsWebInfResource(new File("src/main/webapp/WEB-INF", "beans.xml"))
-                 .addClasses(AsyncBean.class, PublicServlet.class)
+                 .addClasses(MyEntity.class, MyEntityService.class, PublicServlet1.class, PublicServlet2.class)
                  .addAsLibraries(Maven.resolver()
                          .loadPomFromFile("pom.xml")
                          .resolve(
                              "org.omnifaces:omnibeans",
                              "org.omnifaces:omniservices",
-                             "org.omnifaces:omniutils")
+                             "org.omnifaces:omniutils",
+                             "com.h2database:h2")
                          .withTransitivity()
                          .asFile())
                          ;
@@ -58,6 +64,10 @@ import com.gargoylesoftware.htmlunit.WebClient;
          System.out.println(webArchive.toString(true));
 
          return webArchive;
+         } catch (Exception e) {
+             e.printStackTrace();
+             throw e;
+         }
      }
 
      @BeforeEach
@@ -70,12 +80,15 @@ import com.gargoylesoftware.htmlunit.WebClient;
      @Test
      @RunAsClient
      public void testGet() throws IOException {
-         TextPage page = webClient.getPage(base + "servlet");
+         TextPage page = webClient.getPage(base + "servlet1");
 
          System.out.println("Content: \n" + page.getContent());
 
-         assertTrue(page.getContent().contains("async initially done: false"));
-         assertTrue(page.getContent().contains("async outcome: 12"));
+         page = webClient.getPage(base + "servlet2");
+
+         System.out.println("Content: \n" + page.getContent());
+
+         assertTrue(page.getContent().contains("my-test"));
      }
 
 

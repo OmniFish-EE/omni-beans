@@ -16,6 +16,7 @@ import org.omnifaces.services.pooled.Pooled;
 import org.omnifaces.services.pooled.PooledScopeEnabled;
 
 import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.BeanManager;
@@ -25,31 +26,39 @@ import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
 public class CdiExtension implements Extension {
 
     public <T> void processBean(@Observes ProcessAnnotatedType<T> eventIn, BeanManager beanManager) {
-        
+
         ProcessAnnotatedType<T> event = eventIn; // JDK8 u60+ workaround
-        
+
         event.configureAnnotatedType()
                .filterMethods(e -> e.isAnnotationPresent(jakarta.ejb.Asynchronous.class))
                .forEach(e -> e.add(org.omnifaces.services.asynchronous.Asynchronous.Literal.INSTANCE));
-        
+
         // Note: The below replacements are at the moment crude approximations of the
         //       Enterprise Beans annotations that are being replaced.
-        
+
         if (event.getAnnotatedType().isAnnotationPresent(Stateless.class)) {
             event.configureAnnotatedType()
                  // TODO: add transactional support and the ability to configure
                  //       it like Stateless allows.
                  .add(Pooled.Literal.INSTANCE)
                  .add(PooledScopeEnabled.Literal.INSTANCE);
+
+            TransactionAttribute transactionAttribute = event.getAnnotatedType().getAnnotation(TransactionAttribute.class);
+
+            if (transactionAttribute == null) {
+                event.configureAnnotatedType()
+                     .add(TransactionalLiteral.INSTANCE);
+            }
+
         }
-        
+
         if (event.getAnnotatedType().isAnnotationPresent(jakarta.ejb.Singleton.class)) {
             event.configureAnnotatedType()
                   // TODO: add locking
                  .add(ApplicationScoped.Literal.INSTANCE);
         }
-        
-        
+
+
     }
-    
+
 }

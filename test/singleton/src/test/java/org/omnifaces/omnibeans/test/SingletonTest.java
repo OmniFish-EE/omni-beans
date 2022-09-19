@@ -13,9 +13,9 @@
  package org.omnifaces.omnibeans.test;
 
 import static org.jboss.shrinkwrap.api.ShrinkWrap.create;
-import static org.jboss.shrinkwrap.api.asset.EmptyAsset.INSTANCE;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -34,7 +34,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 
  @ExtendWith(ArquillianExtension.class)
  public class SingletonTest {
-     
+
      @ArquillianResource
      private URL base;
 
@@ -43,7 +43,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
      @Deployment(testable = false)
      public static WebArchive createDeployment() {
          WebArchive webArchive = create(WebArchive.class)
-                 .addAsManifestResource(INSTANCE, "beans.xml")
+                 .addAsWebInfResource(new File("src/main/webapp/WEB-INF", "beans.xml"))
                  .addClasses(SingletonBean.class, PublicServlet1.class, PublicServlet2.class)
                  .addAsLibraries(Maven.resolver()
                          .loadPomFromFile("pom.xml")
@@ -54,34 +54,34 @@ import com.gargoylesoftware.htmlunit.WebClient;
                          .withTransitivity()
                          .asFile())
                          ;
-         
+
          System.out.println(webArchive.toString(true));
-         
+
          return webArchive;
      }
-     
+
      @BeforeEach
      public void setup() {
          webClient = new WebClient();
          webClient.getOptions().setTimeout(0);
      }
 
-     
+
      @Test
      @RunAsClient
      public void testGet() throws IOException {
          TextPage page = webClient.getPage(base + "servlet1");
-         
+
          System.out.println("Content: \n" + page.getContent());
-         
+
          assertTrue(page.getContent().contains("singleton 1 outcome: foo"));
-         
+
          page = webClient.getPage(base + "servlet2");
-         
+
          System.out.println("Content: \n" + page.getContent());
-         
+
          assertTrue(page.getContent().contains("singleton 2 outcome: foo bar"));
      }
-   
+
 
  }

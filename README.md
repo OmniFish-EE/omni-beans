@@ -61,3 +61,29 @@ public class SingletonBean {
     }
 }
 ```
+
+## Transaction
+
+```java
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
+@Stateless
+public class MyEntityService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public void save(MyEntity entity ) {
+        // Transaction is automatically active here
+        entityManager.persist(entity);
+    }
+
+    public MyEntity load(int id) {
+        return entityManager.find(MyEntity.class, id);
+    }
+}
+```
+
+
