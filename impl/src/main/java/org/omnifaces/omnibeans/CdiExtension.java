@@ -12,16 +12,27 @@
  */
 package org.omnifaces.omnibeans;
 
+
+
+import static jakarta.ejb.TransactionManagementType.CONTAINER;
+
 import org.omnifaces.services.pooled.Pooled;
 import org.omnifaces.services.pooled.PooledScopeEnabled;
 
+import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.ejb.TransactionManagement;
+import jakarta.ejb.TransactionManagementType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.literal.InjectLiteral;
+import jakarta.enterprise.inject.spi.AnnotatedMember;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
+import jakarta.inject.Inject;
 
 public class CdiExtension implements Extension {
 
@@ -44,10 +55,18 @@ public class CdiExtension implements Extension {
                  .add(PooledScopeEnabled.Literal.INSTANCE);
 
             TransactionAttribute transactionAttribute = event.getAnnotatedType().getAnnotation(TransactionAttribute.class);
+            TransactionManagement transactionManagement = event.getAnnotatedType().getAnnotation(TransactionManagement.class);
 
-            if (transactionAttribute == null) {
-                event.configureAnnotatedType()
-                     .add(TransactionalLiteral.INSTANCE);
+            // If there is no TransactionManagement annotation set, we default to container managed and add transaction support.
+            // Otherwise only add transactions if TransactionManagement is set to CONTAINER (as opposed to BEAN).
+            if (transactionManagement == null || transactionManagement.value().equals(CONTAINER)) {
+                
+                // If there's no TransactionAttribute set, the default is REQUIRED, which is the same
+                // default used by TransactionalLiteral.
+                if (transactionAttribute == null) {
+                    event.configureAnnotatedType()
+                         .add(TransactionalLiteral.INSTANCE);
+                }
             }
 
         }
@@ -58,7 +77,21 @@ public class CdiExtension implements Extension {
                  .add(ApplicationScoped.Literal.INSTANCE);
         }
 
+        // TODO: handle attributes of the EJB annotation
+        event.configureAnnotatedType()
+             .filterFields(e -> shouldInjectionAnnotationBeAdded(e))
+             .forEach(e -> e.add(InjectLiteral.INSTANCE));
+
+        event.configureAnnotatedType()
+             .filterMethods(e -> shouldInjectionAnnotationBeAdded(e))
+             .forEach(e -> e.add(InjectLiteral.INSTANCE));
 
     }
+
+
+   private static <X> boolean shouldInjectionAnnotationBeAdded(AnnotatedMember<? super X> field) {
+       return !field.isAnnotationPresent(Inject.class) && field.isAnnotationPresent(EJB.class);
+   }
+
 
 }
