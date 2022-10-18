@@ -24,7 +24,6 @@ import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.ejb.TransactionManagement;
-import jakarta.ejb.TransactionManagementType;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.literal.InjectLiteral;
@@ -33,6 +32,8 @@ import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 
 public class CdiExtension implements Extension {
 
@@ -60,15 +61,17 @@ public class CdiExtension implements Extension {
             // If there is no TransactionManagement annotation set, we default to container managed and add transaction support.
             // Otherwise only add transactions if TransactionManagement is set to CONTAINER (as opposed to BEAN).
             if (transactionManagement == null || transactionManagement.value().equals(CONTAINER)) {
-                
+
                 // If there's no TransactionAttribute set, the default is REQUIRED, which is the same
                 // default used by TransactionalLiteral.
                 if (transactionAttribute == null) {
                     event.configureAnnotatedType()
                          .add(TransactionalLiteral.INSTANCE);
+                } else {
+                    event.configureAnnotatedType()
+                         .add(TransactionalLiteral.of(transactionAttributeTypeToTxType(transactionAttribute.value())));
                 }
             }
-
         }
 
         if (event.getAnnotatedType().isAnnotationPresent(jakarta.ejb.Singleton.class)) {
@@ -86,12 +89,43 @@ public class CdiExtension implements Extension {
              .filterMethods(e -> shouldInjectionAnnotationBeAdded(e))
              .forEach(e -> e.add(InjectLiteral.INSTANCE));
 
-    }
+        event.configureAnnotatedType()
+             .filterMethods(e -> shouldTransactionalAnnotationBeAdded(e))
+             .forEach(e -> e.add(createTransactional(e.getAnnotated())));
 
+   }
+
+   private Transactional createTransactional(AnnotatedMember<?> field) {
+       TransactionAttribute transactionAttribute = field.getAnnotation(TransactionAttribute.class);
+
+       return TransactionalLiteral.of(transactionAttributeTypeToTxType(transactionAttribute.value()));
+   }
 
    private static <X> boolean shouldInjectionAnnotationBeAdded(AnnotatedMember<? super X> field) {
        return !field.isAnnotationPresent(Inject.class) && field.isAnnotationPresent(EJB.class);
    }
 
+   private static <X> boolean shouldTransactionalAnnotationBeAdded(AnnotatedMember<? super X> field) {
+       return !field.isAnnotationPresent(Transactional.class) && field.isAnnotationPresent(TransactionAttribute.class);
+   }
+
+   private TxType transactionAttributeTypeToTxType(TransactionAttributeType transactionAttributeType) {
+       switch (transactionAttributeType) {
+           case MANDATORY:
+               return TxType.MANDATORY;
+           case NEVER:
+               return TxType.NEVER;
+           case NOT_SUPPORTED:
+               return TxType.NOT_SUPPORTED;
+           case REQUIRED:
+               return TxType.REQUIRED;
+           case REQUIRES_NEW:
+               return TxType.REQUIRES_NEW;
+           case SUPPORTS:
+               return TxType.SUPPORTS;
+       }
+
+       return null;
+   }
 
 }

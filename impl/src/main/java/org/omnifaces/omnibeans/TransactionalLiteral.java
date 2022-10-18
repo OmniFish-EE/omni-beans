@@ -36,6 +36,10 @@ public class TransactionalLiteral extends AnnotationLiteral<Transactional> imple
             new Class[] {}
     );
 
+    public static final TransactionalLiteral of(TxType value) {
+        return of(value, new Class[] {}, new Class[] {});
+    }
+
     public static final TransactionalLiteral of(TxType value, Class[] rollbackOn, Class[] dontRollbackOn) {
         return new TransactionalLiteral(value, rollbackOn, dontRollbackOn);
     }
