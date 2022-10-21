@@ -10,8 +10,9 @@
 
     <artifactId>transaction</artifactId>
     <packaging>war</packaging>
+
     <name>Stateless enterprise bean with default transaction test</name>
-    
+
     <dependencies>
         <dependency>
             <groupId>com.h2database</groupId>

@@ -10,11 +10,18 @@
     <name>OmniBeans Parent</name>
     <description>Implementation of Jakarta Enterprise Beans using CDI</description>
     <url>https://github.com/omnifaces/omnibeans</url>
+    <inceptionYear>2016</inceptionYear>
     <organization>
         <name>OmniFaces</name>
         <url>https://omnifaces.org</url>
     </organization>
-    <inceptionYear>2016</inceptionYear>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <developers>
         <developer>
@@ -29,20 +36,16 @@
         </developer>
     </developers>
 
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+    <modules>
+        <module>impl</module>
+        <module>test</module>
+    </modules>
 
     <scm>
         <url>https://github.com/omnifaces/omnibeans</url>
         <connection>scm:git:git://github.com/omnifaces/omnibeans.git</connection>
         <developerConnection>scm:git:git@github.com:omnifaces/omnibeans.git</developerConnection>
     </scm>
-
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
@@ -56,9 +59,27 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
-    <modules>
-        <module>impl</module>
-        <module>test</module>
-    </modules>
-
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.6.0</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

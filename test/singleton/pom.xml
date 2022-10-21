@@ -10,5 +10,6 @@
 
     <artifactId>singleton</artifactId>
     <packaging>war</packaging>
+
     <name>Singleton enterprise bean test</name>
 </project>

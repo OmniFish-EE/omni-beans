@@ -10,9 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package org.omnifaces.omnibeans;
-
-
+package ee.omnifish.omnibeans;
 
 import static jakarta.ejb.TransactionManagementType.CONTAINER;
 
@@ -35,9 +33,15 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
 
+/**
+ * CDI extension that maps EJB annotations to CDI based ones.
+ *
+ * @author Arjan Tijms
+ *
+ */
 public class CdiExtension implements Extension {
 
-    public <T> void processBean(@Observes ProcessAnnotatedType<T> eventIn, BeanManager beanManager) {
+    <T> void processBean(@Observes ProcessAnnotatedType<T> eventIn, BeanManager beanManager) {
 
         ProcessAnnotatedType<T> event = eventIn; // JDK8 u60+ workaround
 

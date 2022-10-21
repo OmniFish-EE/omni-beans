@@ -10,5 +10,6 @@
 
     <artifactId>async</artifactId>
     <packaging>war</packaging>
+
     <name>Async enterprise bean test</name>
 </project>

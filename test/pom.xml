@@ -23,16 +23,36 @@
         <module.name>org.omnifaces.omnibeans</module.name>
 
         <maven.compiler.release>11</maven.compiler.release>
-        <jakartaee.version>9.1.0</jakartaee.version>
+        <jakartaee.version>10.0.0</jakartaee.version>
 
         <!-- Essential Maven defaults. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <piranha.version>22.10.0-SNAPSHOT</piranha.version>
-        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+        <piranha.version>22.11.0-SNAPSHOT</piranha.version>
+        <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <!-- Test dependencies. -->
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>1.7.0.Alpha13</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.8.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>jakarta.platform</groupId>
@@ -47,12 +67,6 @@
             <groupId>org.omnifaces</groupId>
             <artifactId>omnibeans</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.omnifaces</groupId>
-            <artifactId>omniservices</artifactId>
-            <version>0.2-SNAPSHOT</version>
         </dependency>
         
         <dependency>
@@ -108,27 +122,6 @@
         </dependency>
     </dependencies>
 
-    <dependencyManagement>
-        <dependencies>
-            <!-- Test dependencies. -->
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>1.7.0.Alpha12</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-bom</artifactId>
-                <version>5.8.1</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <build>
         <pluginManagement>
             <plugins>
@@ -140,7 +133,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.9.0</version>
+                    <version>3.10.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -186,7 +179,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.4.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -201,7 +194,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M5</version>
+                    <version>3.0.0-M7</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -248,7 +241,6 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-    
         <plugins>
 
             <!-- Add missing license headers to source files. -->
@@ -313,7 +305,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <javadocVersion>${maven.compiler.release}</javadocVersion>
+                    <quiet>true</quiet>
                     <notimestamp>true</notimestamp>
                     <splitindex>true</splitindex>
                     <doctitle>OmniServices API documentation</doctitle>
@@ -335,7 +327,7 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.8</version>
+                <version>1.6.13</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
@@ -372,6 +364,10 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            
+            <properties>
+                <piranha.offline>true</piranha.offline>
+            </properties>
 
             <dependencies>
                 <dependency>
@@ -406,7 +402,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>3.0.1</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -421,5 +417,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>

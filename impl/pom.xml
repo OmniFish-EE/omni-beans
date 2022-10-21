@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-        xmlns="http://maven.apache.org/POM/4.0.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.omnifaces</groupId>
@@ -12,13 +8,20 @@
     <packaging>jar</packaging>
 
     <name>OmniBeans</name>
-    <description>Implementation of Jakarta Enterprise Beans using CDI</description>
-    <url>https://github.com/omnifaces/omnibeans</url>
-    <organization>
-        <name>OmniFaces</name>
-        <url>https://omnifaces.org</url>
-    </organization>
+    <description>Jakarta Enterprise Beans Lite implementation using CDI</description>
+    <url>https://github.com/OmniFish-EE/omni-beans</url>
     <inceptionYear>2016</inceptionYear>
+    <organization>
+        <name>OmniFish</name>
+        <url>https://omnifish.ee</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <developers>
         <developer>
@@ -33,20 +36,11 @@
         </developer>
     </developers>
 
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <scm>
-        <url>https://github.com/omnifaces/omnibeans</url>
-        <connection>scm:git:git://github.com/omnifaces/omnibeans.git</connection>
-        <developerConnection>scm:git:git@github.com:omnifaces/omnibeans.git</developerConnection>
+        <url>https://github.com/OmniFish-EE/omni-beans</url>
+        <connection>scm:git:git://github.com/OmniFish-EE/omni-beans.git</connection>
+        <developerConnection>scm:git:git@github.com:OmniFish-EE/omni-beans.git</developerConnection>
     </scm>
-
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
@@ -55,10 +49,10 @@
     </distributionManagement>
 
     <properties>
-        <module.name>org.omnifaces.omnibeans</module.name>
+        <module.name>ee.omnifish.omnibeans</module.name>
 
         <maven.compiler.release>11</maven.compiler.release>
-        <jakartaee.version>9.1.0</jakartaee.version>
+        <jakartaee.version>10.0.0</jakartaee.version>
 
         <!-- Essential Maven defaults. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -67,8 +61,8 @@
         <!-- Test versions. -->
         <jacoco.version>0.8.7</jacoco.version>
         
-        <piranha.version>22.1.0</piranha.version>
-        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+        <piranha.version>22.10.0</piranha.version>
+        <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
     </properties>
 
     <dependencies>
@@ -99,20 +93,71 @@
         </dependency>
     </dependencies>
 
-
     <build>
+        <pluginManagement>
+            <plugins>
+
+                <!-- Make sure Eclipse itself also runs license format during build. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.mycila</groupId>
+                                        <artifactId>license-maven-plugin</artifactId>
+                                        <versionRange>[3.0,)</versionRange>
+                                        <goals>
+                                            <goal>format</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute>
+                                            <runOnConfiguration>true</runOnConfiguration>
+                                        </execute>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
+            <plugin>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.6.0</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.10.1</version>
             </plugin>
 
             <!-- Add missing license headers to source files. -->
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>3.0</version>
+                <version>4.2.rc2</version>
                 <configuration>
                     <header>license.txt</header>
                     <excludes>
@@ -136,7 +181,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.2.2</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -171,9 +216,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.4.1</version>
                 <configuration>
-                    <javadocVersion>${maven.compiler.release}</javadocVersion>
+                    <quiet>true</quiet>
                     <notimestamp>true</notimestamp>
                     <splitindex>true</splitindex>
                     <doctitle>OmniBeans API documentation</doctitle>
@@ -234,39 +279,6 @@
                 <version>${maven-surefire-plugin.version}</version>
             </plugin>
         </plugins>
-
-        <pluginManagement>
-            <plugins>
-
-                <!-- Make sure Eclipse itself also runs license format during build. -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>com.mycila</groupId>
-                                        <artifactId>license-maven-plugin</artifactId>
-                                        <versionRange>[3.0,)</versionRange>
-                                        <goals>
-                                            <goal>format</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <execute>
-                                            <runOnConfiguration>true</runOnConfiguration>
-                                        </execute>
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 
     <profiles>
@@ -278,7 +290,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>3.0.1</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -293,5 +305,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>
