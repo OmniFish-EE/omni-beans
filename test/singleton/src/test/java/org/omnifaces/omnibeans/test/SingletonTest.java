@@ -24,7 +24,6 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,14 +44,14 @@ import com.gargoylesoftware.htmlunit.WebClient;
          WebArchive webArchive = create(WebArchive.class)
                  .addAsWebInfResource(new File("src/main/webapp/WEB-INF", "beans.xml"))
                  .addClasses(SingletonBean.class, PublicServlet1.class, PublicServlet2.class)
-                 .addAsLibraries(Maven.resolver()
-                         .loadPomFromFile("pom.xml")
-                         .resolve(
-                             "org.omnifaces:omnibeans",
-                             "org.omnifaces:omniservices",
-                             "org.omnifaces:omniutils")
-                         .withTransitivity()
-                         .asFile())
+//                 .addAsLibraries(Maven.resolver()
+//                         .loadPomFromFile("pom.xml")
+//                         .resolve(
+//                             "org.omnifaces:omnibeans",
+//                             "org.omnifaces:omniservices",
+//                             "org.omnifaces:omniutils")
+//                         .withTransitivity()
+//                         .asFile())
                          ;
 
          System.out.println(webArchive.toString(true));
