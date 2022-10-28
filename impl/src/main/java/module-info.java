@@ -10,24 +10,16 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package org.omnifaces.omnibeans.test;
+/**
+ * @author Arjan Tijms
+ */
+module ee.omnifish.omnibeans {
 
-import jakarta.ejb.Stateless;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-
-@Stateless
-public class MyEntityService {
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    public void save(MyEntity entity ) {
-        entityManager.persist(entity);
-    }
-
-    public MyEntity load(int id) {
-        return entityManager.find(MyEntity.class, id);
-    }
+    exports ee.omnifish.omnibeans;
+    opens ee.omnifish.omnibeans;
+    requires jakarta.ejb;
+    requires jakarta.cdi;
+    requires org.omnifaces.services;
 
 }
+

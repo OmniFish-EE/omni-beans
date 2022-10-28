@@ -3,9 +3,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.omnifaces</groupId>
+        <groupId>ee.omnifish</groupId>
         <artifactId>omnibeans-parent</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.1</version>
     </parent>
 
     <artifactId>test-pom</artifactId>
@@ -20,8 +20,6 @@
     </modules>
 
     <properties>
-        <module.name>org.omnifaces.omnibeans</module.name>
-
         <maven.compiler.release>11</maven.compiler.release>
         <jakartaee.version>10.0.0</jakartaee.version>
 
@@ -64,7 +62,7 @@
         <!-- OmniFaces dependencies. -->
         
         <dependency>
-            <groupId>org.omnifaces</groupId>
+            <groupId>ee.omnifish</groupId>
             <artifactId>omnibeans</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -72,13 +70,13 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omniservices</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <version>0.3</version>
         </dependency>
         
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omniutils</artifactId>
-            <version>0.12</version>
+            <version>0.13</version>
         </dependency>
         
 
@@ -280,7 +278,6 @@
                         <manifestEntries>
                             <URL>${project.url}</URL>
                             <Extension-Name>${project.artifactId}</Extension-Name>
-                            <Automatic-Module-Name>${module.name}</Automatic-Module-Name>
                         </manifestEntries>
                     </archive>
                 </configuration>

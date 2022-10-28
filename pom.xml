@@ -2,18 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.omnifaces</groupId>
+    <groupId>ee.omnifish</groupId>
     <artifactId>omnibeans-parent</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
     <packaging>pom</packaging>
 
     <name>OmniBeans Parent</name>
     <description>Implementation of Jakarta Enterprise Beans using CDI</description>
-    <url>https://github.com/omnifaces/omnibeans</url>
+    <url>https://github.com/OmniFish-EE/omni-beans</url>
     <inceptionYear>2016</inceptionYear>
     <organization>
-        <name>OmniFaces</name>
-        <url>https://omnifaces.org</url>
+        <name>OmniFish</name>
+        <url>https://omnifish.ee</url>
     </organization>
     <licenses>
         <license>
@@ -42,9 +42,9 @@
     </modules>
 
     <scm>
-        <url>https://github.com/omnifaces/omnibeans</url>
-        <connection>scm:git:git://github.com/omnifaces/omnibeans.git</connection>
-        <developerConnection>scm:git:git@github.com:omnifaces/omnibeans.git</developerConnection>
+        <url>https://github.com/OmniFish-EE/omni-beans</url>
+        <connection>scm:git:git://github.com/OmniFish-EE/omni-beans.git</connection>
+        <developerConnection>scm:git:git@OmniFish-EE/omni-beans.git</developerConnection>
     </scm>
     <distributionManagement>
         <snapshotRepository>
