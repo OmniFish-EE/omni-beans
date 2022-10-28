@@ -241,7 +241,7 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.8</version>
+                <version>1.6.13</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
@@ -283,11 +283,14 @@
     </build>
 
     <profiles>
+
+        <!-- Release deploy: mvn clean deploy -P release -->
         <profile>
             <id>release</id>
             <build>
                 <plugins>
-                    <!-- Signing with GPG is a requirement for a release deployment (to Maven central) -->
+
+                    <!-- Signing with GPG is a requirement for a release deployment to Maven central. -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
