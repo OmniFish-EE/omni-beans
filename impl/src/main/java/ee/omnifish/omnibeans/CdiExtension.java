@@ -27,6 +27,7 @@ import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.literal.InjectLiteral;
 import jakarta.enterprise.inject.spi.AnnotatedMember;
 import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.BeforeBeanDiscovery;
 import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
 import jakarta.inject.Inject;
@@ -40,6 +41,12 @@ import jakarta.transaction.Transactional.TxType;
  *
  */
 public class CdiExtension implements Extension {
+
+    public void register(@Observes BeforeBeanDiscovery beforeBean, BeanManager beanManager) {
+        addAnnotatedTypes(beforeBean, beanManager,
+            SessionContextImpl.class
+        );
+    }
 
     <T> void processBean(@Observes ProcessAnnotatedType<T> eventIn, BeanManager beanManager) {
 
@@ -130,6 +137,12 @@ public class CdiExtension implements Extension {
        }
 
        return null;
+   }
+
+   public static void addAnnotatedTypes(BeforeBeanDiscovery beforeBean, BeanManager beanManager, Class<?>... types) {
+       for (Class<?> type : types) {
+           beforeBean.addAnnotatedType(beanManager.createAnnotatedType(type), "OmniBeans " + type.getName());
+       }
    }
 
 }
