@@ -20,6 +20,7 @@ module ee.omnifish.omnibeans {
     requires jakarta.ejb;
     requires jakarta.cdi;
     requires org.omnifaces.services;
+    requires jakarta.security;
 
 }
 

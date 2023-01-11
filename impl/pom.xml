@@ -72,13 +72,22 @@
             <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
-
+        
         <dependency>
-            <groupId>jakarta.platform</groupId>
-            <artifactId>jakarta.jakartaee-api</artifactId>
-            <version>${jakartaee.version}</version>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>jakarta.security.enterprise</groupId>
+            <artifactId>jakarta.security.enterprise-api</artifactId>
+            <version>3.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+       
 
         <!-- OmniFaces dependencies. -->
         <dependency>
