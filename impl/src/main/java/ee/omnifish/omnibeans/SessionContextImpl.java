@@ -22,19 +22,24 @@ import jakarta.ejb.EJBObject;
 import jakarta.ejb.SessionContext;
 import jakarta.ejb.TimerService;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.security.enterprise.SecurityContext;
 import jakarta.transaction.UserTransaction;
 
 @ApplicationScoped
 public class SessionContextImpl implements SessionContext {
 
+    @Inject
+    private SecurityContext securityContext;
+
     @Override
     public Principal getCallerPrincipal() throws IllegalStateException {
-        return null;
+        return securityContext.getCallerPrincipal();
     }
 
     @Override
     public boolean isCallerInRole(String roleName) throws IllegalStateException {
-        return false;
+        return securityContext.isCallerInRole(roleName);
     }
 
     @Override
