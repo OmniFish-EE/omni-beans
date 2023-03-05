@@ -4,7 +4,7 @@
 
     <groupId>ee.omnifish</groupId>
     <artifactId>omnibeans-parent</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OmniBeans Parent</name>

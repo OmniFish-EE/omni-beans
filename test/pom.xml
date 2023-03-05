@@ -5,7 +5,7 @@
     <parent>
         <groupId>ee.omnifish</groupId>
         <artifactId>omnibeans-parent</artifactId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>test-pom</artifactId>
@@ -27,7 +27,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <piranha.version>22.11.0-SNAPSHOT</piranha.version>
+        <piranha.version>23.3.0-SNAPSHOT</piranha.version>
         <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
     </properties>
 
@@ -382,6 +382,7 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <systemPropertyVariables>
+								<!-- TODO: set param to override omni-beans version -->
                                 <piranha.offline>${piranha.offline}</piranha.offline>
                                 <piranha.async.timeout>1000</piranha.async.timeout>
                             </systemPropertyVariables>
