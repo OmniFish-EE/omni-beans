@@ -14,10 +14,7 @@ package org.omnifaces.omnibeans.test;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
-import jakarta.ejb.EJB;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,9 +23,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * 
+ *
  * @author Arjan Tijms
- * 
+ *
  */
 @WebServlet(urlPatterns = "/servlet2")
 public class PublicServlet2 extends HttpServlet {
@@ -41,7 +38,7 @@ public class PublicServlet2 extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.getWriter().write("This is a public servlet \n");
-        
+
         try {
             testSingleton2(response.getWriter());
         } catch (Exception e) {
@@ -50,11 +47,11 @@ public class PublicServlet2 extends HttpServlet {
         }
 
     }
-   
+
 
     public void testSingleton2(PrintWriter writer) throws InterruptedException {
         singletonBean.addValue(" bar");
-        
+
         writer.write("singleton 2 outcome: " + singletonBean.getAccumulatedValues() + "\n");
     }
 
