@@ -43,16 +43,10 @@ import com.gargoylesoftware.htmlunit.WebClient;
      public static WebArchive createDeployment() {
          WebArchive webArchive = create(WebArchive.class)
                  .addAsWebInfResource(new File("src/main/webapp/WEB-INF", "beans.xml"))
-                 .addClasses(SingletonBean.class, PublicServlet1.class, PublicServlet2.class)
-//                 .addAsLibraries(Maven.resolver()
-//                         .loadPomFromFile("pom.xml")
-//                         .resolve(
-//                             "org.omnifaces:omnibeans",
-//                             "org.omnifaces:omniservices",
-//                             "org.omnifaces:omniutils")
-//                         .withTransitivity()
-//                         .asFile())
-                         ;
+                 .addClasses(
+                     SingletonBean.class,
+                     PublicServlet1.class,
+                     PublicServlet2.class);
 
          System.out.println(webArchive.toString(true));
 
