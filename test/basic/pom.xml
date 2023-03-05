@@ -19,7 +19,7 @@
     <parent>
         <groupId>ee.omnifish</groupId>
         <artifactId>test-pom</artifactId>
-        <version>0.3-SNAPSHOT</version>
+        <version>0.3</version>
     </parent>
 
     <artifactId>basic</artifactId>
