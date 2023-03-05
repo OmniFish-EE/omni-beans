@@ -5,7 +5,7 @@
     <parent>
         <groupId>ee.omnifish</groupId>
         <artifactId>omnibeans-parent</artifactId>
-        <version>0.3</version>
+        <version>0.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>test-pom</artifactId>
@@ -70,7 +70,7 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omniservices</artifactId>
-            <version>0.3</version>
+            <version>0.4</version>
         </dependency>
         
         <dependency>
