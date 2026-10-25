@@ -260,7 +260,7 @@ public class MyEntityService {
 
 ## Security
 
-```
+```java
 import jakarta.ejb.Stateless;
 import jakarta.ejb.SessionContext;
 
