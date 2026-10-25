@@ -23,9 +23,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
+ * Adds {@code "foo"} to {@link SingletonBean}, and writes the accumulated values.
  *
  * @author Arjan Tijms
- *
+ * @serial exclude
  */
 @WebServlet(urlPatterns = "/servlet1")
 public class PublicServlet1 extends HttpServlet {
@@ -34,6 +35,12 @@ public class PublicServlet1 extends HttpServlet {
 
     @Inject
     private SingletonBean singletonBean;
+
+    /**
+     * Creates the servlet.
+     */
+    public PublicServlet1() {
+    }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -47,6 +54,12 @@ public class PublicServlet1 extends HttpServlet {
         }
     }
 
+    /**
+     * Adds a value to the singleton, and writes the accumulated values.
+     *
+     * @param writer to write the outcome to
+     * @throws InterruptedException never
+     */
     public void testSingleton1(PrintWriter writer) throws InterruptedException {
         singletonBean.addValue("foo");
 

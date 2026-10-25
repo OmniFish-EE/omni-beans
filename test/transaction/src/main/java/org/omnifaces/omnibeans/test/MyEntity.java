@@ -16,9 +16,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 /**
+ * An entity with an id and a name.
  *
  * @author arjan
- *
  */
 @Entity
 public class MyEntity {
@@ -44,6 +44,7 @@ public class MyEntity {
     }
 
     /**
+     * Returns the id.
      *
      * @return the id
      */
@@ -52,14 +53,16 @@ public class MyEntity {
     }
 
     /**
+     * Sets the id.
      *
-     * @param id
+     * @param id the id
      */
     public void setId(int id) {
         this.id = id;
     }
 
     /**
+     * Returns the name.
      *
      * @return the name
      */
@@ -68,8 +71,9 @@ public class MyEntity {
     }
 
     /**
+     * Sets the name.
      *
-     * @param name
+     * @param name the name
      */
     public void setName(String name) {
         this.name = name;

@@ -20,21 +20,40 @@ import jakarta.ejb.Lock;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
 
+/**
+ * A singleton bean that accumulates values, with a write lock for adding and a read lock for reading them.
+ */
 @Startup
 @Singleton
 public class SingletonBean {
     private StringBuilder builder;
+
+    /**
+     * Creates the bean.
+     */
+    public SingletonBean() {
+    }
 
     @PostConstruct
     private void postConstruct() {
         builder = new StringBuilder();
     }
 
+    /**
+     * Adds a value.
+     *
+     * @param value the value to add
+     */
     @Lock(WRITE)
     public void addValue(String value) {
         builder.append(value);
     }
 
+    /**
+     * Returns the values added so far.
+     *
+     * @return the values, concatenated
+     */
     @Lock(READ)
     public String getAccumulatedValues() {
         return builder.toString();

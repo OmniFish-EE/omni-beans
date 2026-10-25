@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ee.omnifish</groupId>
+        <artifactId>omnibeans-parent</artifactId>
+        <version>0.4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>omnibeans-tck</artifactId>
+    <packaging>pom</packaging>
+
+    <name>OmniBeans - Jakarta Enterprise Beans TCK</name>
+    <description>
+        Runs the Enterprise Beans Lite tests of the (binary) Jakarta Enterprise Beans TCK against OmniBeans, on Quarkus
+        (the default) or on Piranha (-Ppiranha): install downloads and installs the TCK, run runs it. Not part of the
+        regular build, as a full run builds hundreds of applications.
+    </description>
+
+    <modules>
+        <module>install</module>
+        <module>run</module>
+    </modules>
+
+    <properties>
+        <!-- The TCK runner isn't deployed -->
+        <maven.deploy.skip>true</maven.deploy.skip>
+
+        <tck.version>11.0.3</tck.version>
+    </properties>
+</project>

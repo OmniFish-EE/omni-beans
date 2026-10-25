@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ee.omnifish</groupId>
+        <artifactId>omnibeans-parent</artifactId>
+        <version>0.4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>omnibeans-quarkus</artifactId>
+    <packaging>jar</packaging>
+
+    <name>OmniBeans for Quarkus</name>
+    <description>What OmniBeans needs from Quarkus that only Quarkus can do: running session beans as their run-as role</description>
+
+    <properties>
+        <module.name>ee.omnifish.omnibeans.quarkus</module.name>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>ee.omnifish</groupId>
+            <artifactId>omnibeans</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.quarkus.security</groupId>
+            <artifactId>quarkus-security</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>

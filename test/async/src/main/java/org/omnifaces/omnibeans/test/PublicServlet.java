@@ -25,9 +25,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * 
+ * Calls the asynchronous method of {@link AsyncBean}, and writes whether it returned before it completed.
+ *
  * @author Arjan Tijms
- * 
+ * @serial exclude
  */
 @WebServlet(urlPatterns = "/servlet")
 public class PublicServlet extends HttpServlet {
@@ -36,6 +37,12 @@ public class PublicServlet extends HttpServlet {
     
     @Inject
     private AsyncBean asyncBean;
+
+    /**
+     * Creates the servlet.
+     */
+    public PublicServlet() {
+    }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -50,6 +57,13 @@ public class PublicServlet extends HttpServlet {
 
     }
     
+    /**
+     * Calls the asynchronous method, and writes its outcome.
+     *
+     * @param writer to write the outcome to
+     * @throws ExecutionException when the method failed
+     * @throws InterruptedException when interrupted while waiting
+     */
     public void testAsync(PrintWriter writer) throws ExecutionException, InterruptedException {
         Future<Integer> resultFuture = asyncBean.multiply(3, 4);
         writer.write("async initially done: " + resultFuture.isDone() + "\n");

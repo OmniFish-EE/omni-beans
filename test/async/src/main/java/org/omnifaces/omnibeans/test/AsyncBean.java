@@ -21,10 +21,26 @@ import jakarta.ejb.AsyncResult;
 import jakarta.ejb.Asynchronous;
 import jakarta.ejb.Stateless;
 
+/**
+ * A stateless bean with an asynchronous method.
+ */
 @Stateless
 public class AsyncBean {
     private static final Logger LOGGER = Logger.getLogger(AsyncBean.class.getName());
 
+    /**
+     * Creates the bean.
+     */
+    public AsyncBean() {
+    }
+
+    /**
+     * Multiplies two numbers, slowly.
+     *
+     * @param number1 the first number
+     * @param number2 the second number
+     * @return the product
+     */
     @Asynchronous
     public Future<Integer> multiply(int number1, int number2) {
         try {

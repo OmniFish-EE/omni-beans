@@ -23,9 +23,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
+ * Saves an entity with {@link MyEntityService}.
  *
  * @author Arjan Tijms
- *
+ * @serial exclude
  */
 @WebServlet(urlPatterns = "/servlet1")
 public class PublicServlet1 extends HttpServlet {
@@ -34,6 +35,12 @@ public class PublicServlet1 extends HttpServlet {
 
     @Inject
     private MyEntityService myEntityService;
+
+    /**
+     * Creates the servlet.
+     */
+    public PublicServlet1() {
+    }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -47,6 +54,12 @@ public class PublicServlet1 extends HttpServlet {
         }
     }
 
+    /**
+     * Saves an entity.
+     *
+     * @param writer to write the outcome to
+     * @throws InterruptedException never
+     */
     public void testSave(PrintWriter writer) throws InterruptedException {
         myEntityService.save(new MyEntity(1, "my-test"));
     }

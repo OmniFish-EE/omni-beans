@@ -28,8 +28,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.WebClient;
+import org.htmlunit.TextPage;
+import org.htmlunit.WebClient;
 
  @ExtendWith(ArquillianExtension.class)
  public class AsyncTest {
@@ -43,7 +43,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
      public static WebArchive createDeployment() {
          WebArchive webArchive = create(WebArchive.class)
                  .addAsWebInfResource(new File("src/main/webapp/WEB-INF", "beans.xml"))
-                 .addClasses(AsyncBean.class, PublicServlet.class)
+                 .addClasses(AsyncBean.class, PublicServlet.class, CancellableBean.class, CancelServlet.class)
 //                 .addAsLibraries(Maven.resolver()
 //                         .loadPomFromFile("pom.xml")
 //                         .resolve(
@@ -80,6 +80,22 @@ import com.gargoylesoftware.htmlunit.WebClient;
 
          assertTrue(page.getContent().contains("async initially done: false"));
          assertTrue(page.getContent().contains("async outcome: 12"));
+     }
+
+     /**
+      * Cancelling a started asynchronous method doesn't interrupt it, but makes SessionContext.wasCancelCalled() return
+      * true in it.
+      */
+     @Test
+     @RunAsClient
+     public void wasCancelCalled() throws IOException {
+         TextPage page = webClient.getPage(base + "cancel");
+         String content = page.getContent();
+         System.out.println("Content: \n" + content);
+
+         assertTrue(content.contains("cancel: false"), content);
+         assertTrue(content.contains("cancelled: false"), content);
+         assertTrue(content.contains("result: wasCancelCalled: true, interrupted: false"), content);
      }
 
 

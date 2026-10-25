@@ -10,17 +10,47 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
+import jakarta.enterprise.inject.build.compatible.spi.BuildCompatibleExtension;
+import jakarta.servlet.ServletContainerInitializer;
+
+import ee.omnifish.omnibeans.OmniBeansExtension;
+import ee.omnifish.omnibeans.security.SessionBeanPolicyContextInitializer;
+
 /**
+ * OmniBeans: Jakarta Enterprise Beans on CDI, by mapping their annotations to CDI
+ * various Jakarta APIs, and where needed Exousia and OmniServices ones.
+ *
  * @author Arjan Tijms
  */
 module ee.omnifish.omnibeans {
 
+    provides BuildCompatibleExtension with OmniBeansExtension;
+    provides ServletContainerInitializer with SessionBeanPolicyContextInitializer;
+
     exports ee.omnifish.omnibeans;
+    exports ee.omnifish.omnibeans.spi;
     opens ee.omnifish.omnibeans;
-    requires jakarta.ejb;
-    requires jakarta.cdi;
+
+    // Not exported, but their beans and interceptors are injected and called reflectively by CDI
+    opens ee.omnifish.omnibeans.exceptions;
+    opens ee.omnifish.omnibeans.interceptors;
+    opens ee.omnifish.omnibeans.security;
+    opens ee.omnifish.omnibeans.security.buildtime;
+    opens ee.omnifish.omnibeans.transactions;
+
+    // Exported signatures use their types: SessionContextImpl implements SessionContext (with UserTransaction),
+    // OmniBeansExtension is a BuildCompatibleExtension
+    requires transitive jakarta.ejb;
+    requires transitive jakarta.cdi;
+    requires transitive jakarta.transaction;
+
+    requires java.logging;
+    requires java.naming;
+    requires java.rmi;
     requires org.omnifaces.services;
-    requires jakarta.security;
+    requires jakarta.security.jacc;
+    requires static jakarta.servlet;
+    requires static org.glassfish.exousia;
 
 }
 

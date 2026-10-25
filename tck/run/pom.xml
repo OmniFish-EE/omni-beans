@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2024  Contributors to the Eclipse Foundation.
+  ~ Copyright 2010, Red Hat, Inc., and individual contributors
+  ~ by the @authors tag. See the copyright.txt in the distribution for a
+  ~ full listing of individual contributors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+
+  Based on the platform TCK's glassfish-runner/enterprise-beans-tck/enterprise-beans-tck-run, changed to run the
+  Enterprise Beans Lite tests against OmniBeans.
+
+  Quarkus (the default; each test archive is built into a Quarkus application by the Arquillian Quarkus container):
+    mvn clean install
+  Piranha (in process; needs the local Piranha build with the weld-early-start fixes):
+    mvn clean install -Ppiranha
+  For now only the servlet vehicle runs; the other vehicles too:
+    mvn clean install -Dtck.skipOtherVehicles=false
+  A part of the tests, e.g.:
+    mvn clean install -Dtest='com.sun.ts.tests.ejb30.lite.basic.**.*EjbliteservletTest'
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ee.omnifish</groupId>
+        <artifactId>omnibeans-tck</artifactId>
+        <version>0.4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>omnibeans-tck-run</artifactId>
+
+    <name>OmniBeans - Jakarta Enterprise Beans TCK - Run</name>
+    <description>Runs the Enterprise Beans Lite tests of the Jakarta Enterprise Beans TCK against OmniBeans</description>
+
+    <properties>
+        <!-- The TCK's environment (ts.jte), the filtered copy in the build directory -->
+        <ts.home>${project.build.directory}/test-classes/jakartaeetck</ts.home>
+
+        <!--
+            The Enterprise Beans Lite tests: those required in the Web Profile (tag "web"), which run in a web vehicle
+            (servlet, JSP or Faces) through the javatest protocol. Tests tagged "web_optional" test optional features
+            (such as remote asynchronous methods and persistent timers), those tagged "ejb" the full profile.
+        -->
+        <groups>web &amp; tck-javatest</groups>
+
+        <!-- The port the vehicles are called on, as webServerPort in ts.jte -->
+        <tck.http.port>8080</tck.http.port>
+
+        <!--
+            For now, only the servlet vehicle (ejbliteservlet) runs; -Dtck.skipOtherVehicles=false runs the servlet
+            filter (ejbliteservlet2), JSP (ejblitejsp) and Faces (ejblitejsf) vehicles too.
+        -->
+        <tck.skipOtherVehicles>true</tck.skipOtherVehicles>
+
+        <arquillian-quarkus.version>1.1.1</arquillian-quarkus.version>
+        <wasp.version>4.0.4</wasp.version>
+        <myfaces-quarkus.version>4.1.4</myfaces-quarkus.version>
+        <piranha.version>25.4.0-SNAPSHOT</piranha.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- First, so it wins over the older version the TCK's BOM imports (the Quarkus container needs 1.10) -->
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>1.10.2.Final</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.tck</groupId>
+                <artifactId>artifacts-bom</artifactId>
+                <version>${tck.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Jakarta EE APIs -->
+        <dependency>
+            <groupId>jakarta.ejb</groupId>
+            <artifactId>jakarta.ejb-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- The actual TCK containing the tests -->
+        <dependency>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>ejb30</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>ejb32</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>arquillian-protocol-appclient</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>arquillian-protocol-javatest</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>tck-porting-lib</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.tck.arquillian</groupId>
+            <artifactId>arquillian-protocol-lib</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit 5 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-reporting</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Arquillian; the container comes from the profile -->
+        <dependency>
+            <groupId>org.jboss.arquillian.junit5</groupId>
+            <artifactId>arquillian-junit5-container</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-spi</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+            <artifactId>shrinkwrap-descriptors-impl-base</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- Filter the test resources (arquillian*.xml, ts.jte) -->
+        <testResources>
+            <testResource>
+                <filtering>true</filtering>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <dependenciesToScan>
+                        <dependency>jakarta.tck:ejb30</dependency>
+                        <dependency>jakarta.tck:ejb32</dependency>
+                    </dependenciesToScan>
+                    <groups>${groups}</groups>
+                    <!-- A baseline: all executions run, whatever fails -->
+                    <testFailureIgnore>true</testFailureIgnore>
+                    <systemPropertyVariables>
+                        <arquillian.xml>${arquillian.xml.file}</arquillian.xml>
+                        <ts.home>${ts.home}</ts.home>
+                        <!--
+                            The vehicle runners call the vehicles without a timeout; with one, a test whose vehicle
+                            doesn't respond (e.g. one that recurses or waits for a timer forever) fails after 2 minutes.
+                        -->
+                        <sun.net.client.defaultReadTimeout>120000</sun.net.client.defaultReadTimeout>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!--
+            Quarkus. Each test archive becomes a Quarkus application with OmniBeans, on the vehicles' port. The
+            vehicles run in separate executions, so that only the JSP and Faces ones get Jakarta Pages (WaSP) and
+            Jakarta Faces (MyFaces).
+        -->
+        <profile>
+            <id>quarkus</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <arquillian.xml.file>arquillian-quarkus.xml</arquillian.xml.file>
+                <quarkus.omnibeans.dependencies>
+                    io.quarkus:quarkus-undertow,
+                    io.quarkus:quarkus-narayana-jta,
+                    io.quarkus:quarkus-smallrye-context-propagation,
+                    ee.omnifish:omnibeans:${project.version},
+                    org.omnifaces:omniservices:${omniservices.version},
+                    jakarta.ejb:jakarta.ejb-api:${jakarta.ejb-api.version},
+                    jakarta.authorization:jakarta.authorization-api:${jakarta.authorization-api.version}
+                </quarkus.omnibeans.dependencies>
+                
+                <!-- Quarkus rejects @jakarta.ejb.Singleton unless this check is off -->
+                <quarkus.omnibeans.buildProperties>quarkus.arc.detect-wrong-annotations=false</quarkus.omnibeans.buildProperties>
+                
+                <!--
+                    Without Jakarta Faces, the TCK's Faces client beans, which it puts in the archives of all vehicles,
+                    are left out: their @Inject @ManagedProperty fields can't be satisfied without Faces.
+                -->
+                <quarkus.omnibeans.withoutFaces.buildProperties>
+                    ${quarkus.omnibeans.buildProperties}
+                    quarkus.arc.exclude-types=JsfClient,JsfClientBase,EJBLiteJsfClientBase,AnnotatedJsfClientBase,AsyncJsfClientBase,DescriptorJsfClientBase,InheritanceJsfClientBase,MetadataJsfClientBase,RWJsfClientBase,StatefulConcurrencyJsfClientBase
+                </quarkus.omnibeans.withoutFaces.buildProperties>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>ee.omnifish.arquillian</groupId>
+                    <artifactId>arquillian-quarkus-managed</artifactId>
+                    <version>${arquillian-quarkus.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <arquillian.quarkus.httpPort>${tck.http.port}</arquillian.quarkus.httpPort>
+                            </systemPropertyVariables>
+                        </configuration>
+                        <executions>
+                            <!-- The servlet vehicle (ejbliteservlet) -->
+                            <execution>
+                                <id>default-test</id>
+                                <configuration>
+                                    <includes>
+                                        <include>**/*EjbliteservletTest.java</include>
+                                    </includes>
+                                    <systemPropertyVariables>
+                                        <arquillian.quarkus.dependencies>${quarkus.omnibeans.dependencies}</arquillian.quarkus.dependencies>
+                                        <arquillian.quarkus.buildProperties>${quarkus.omnibeans.withoutFaces.buildProperties}</arquillian.quarkus.buildProperties>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                            <!--
+                                The JSP vehicle (ejblitejsp) and the servlet filter vehicle (ejbliteservlet2), which
+                                filters a JSP, with WaSP
+                            -->
+                            <execution>
+                                <id>jsp-vehicle</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <skipTests>${tck.skipOtherVehicles}</skipTests>
+                                    <includes>
+                                        <include>**/*Ejblitejsp*Test.java</include>
+                                        <include>**/*Ejbliteservlet2Test.java</include>
+                                    </includes>
+                                    <systemPropertyVariables>
+                                        <arquillian.quarkus.dependencies>${quarkus.omnibeans.dependencies}, org.glassfish.wasp:quarkus-wasp:${wasp.version}</arquillian.quarkus.dependencies>
+                                        <arquillian.quarkus.buildProperties>${quarkus.omnibeans.withoutFaces.buildProperties}</arquillian.quarkus.buildProperties>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                            <!-- The Faces vehicle (ejblitejsf), with MyFaces -->
+                            <execution>
+                                <id>jsf-vehicle</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <skipTests>${tck.skipOtherVehicles}</skipTests>
+                                    <includes>
+                                        <include>**/*Ejblitejsf*Test.java</include>
+                                    </includes>
+                                    <systemPropertyVariables>
+                                        <arquillian.quarkus.dependencies>${quarkus.omnibeans.dependencies}, org.apache.myfaces.core.extensions.quarkus:myfaces-quarkus:${myfaces-quarkus.version}</arquillian.quarkus.dependencies>
+                                        <arquillian.quarkus.buildProperties>${quarkus.omnibeans.buildProperties}</arquillian.quarkus.buildProperties>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!--
+            Piranha Micro, in process. Until they're upstream, this needs a local Piranha build with the fixes of branch
+            weld-early-start, without which @Transactional doesn't work.
+        -->
+        <profile>
+            <id>piranha</id>
+            <properties>
+                <arquillian.xml.file>arquillian-piranha.xml</arquillian.xml.file>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>cloud.piranha.arquillian</groupId>
+                    <artifactId>piranha-arquillian-server</artifactId>
+                    <version>${piranha.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.shrinkwrap.resolver</groupId>
+                    <artifactId>shrinkwrap-resolver-depchain</artifactId>
+                    <version>3.3.7</version>
+                    <type>pom</type>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <piranha.offline>true</piranha.offline>
+                                <piranha.rootIsWarName>true</piranha.rootIsWarName>
+                                <piranha.port>${tck.http.port}</piranha.port>
+                                <piranha.autoPort>false</piranha.autoPort>
+                                <!-- Weld needs "all" to discover classes that are only annotated @Stateless/@Singleton -->
+                                <piranha.emptyBeansXmlModeAll>true</piranha.emptyBeansXmlModeAll>
+                                <!-- Replaces the OmniBeans and OmniServices versions that Micro comes with -->
+                                <piranha.dependencies>ee.omnifish:omnibeans:${project.version},org.omnifaces:omniservices:${omniservices.version}</piranha.dependencies>
+                            </systemPropertyVariables>
+                        </configuration>
+                        <executions>
+                            <!-- The servlet vehicle (ejbliteservlet) -->
+                            <execution>
+                                <id>default-test</id>
+                                <configuration>
+                                    <includes>
+                                        <include>**/*EjbliteservletTest.java</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                            <!-- The servlet filter, JSP and Faces vehicles; Micro has Jakarta Pages and Faces -->
+                            <execution>
+                                <id>other-vehicles</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <skipTests>${tck.skipOtherVehicles}</skipTests>
+                                    <includes>
+                                        <include>**/*Ejbliteservlet2Test.java</include>
+                                        <include>**/*Ejblitejsp*Test.java</include>
+                                        <include>**/*Ejblitejsf*Test.java</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
