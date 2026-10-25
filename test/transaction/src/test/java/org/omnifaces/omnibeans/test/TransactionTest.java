@@ -29,8 +29,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.WebClient;
+import org.htmlunit.TextPage;
+import org.htmlunit.WebClient;
 
  @ExtendWith(ArquillianExtension.class)
  public class TransactionTest {

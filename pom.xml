@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         child.project.url.inherit.append.path="false">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ee.omnifish</groupId>
@@ -38,32 +39,251 @@
 
     <modules>
         <module>impl</module>
+        <module>quarkus</module>
         <module>test</module>
     </modules>
 
-    <scm>
+    <scm child.scm.connection.inherit.append.path="false"
+         child.scm.developerConnection.inherit.append.path="false"
+         child.scm.url.inherit.append.path="false">
         <url>https://github.com/OmniFish-EE/omni-beans</url>
         <connection>scm:git:git://github.com/OmniFish-EE/omni-beans.git</connection>
-        <developerConnection>scm:git:git@OmniFish-EE/omni-beans.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:OmniFish-EE/omni-beans.git</developerConnection>
     </scm>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <properties>
+        <maven.compiler.release>17</maven.compiler.release>
+
         <!-- Essential Maven defaults. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- The javadoc is only built for a release (profile release) -->
+        <docs.phase>none</docs.phase>
+
+        <!-- Also used by the tests, to build the Quarkus applications with -->
+        <omniservices.version>0.5</omniservices.version>
+        <jakarta.ejb-api.version>4.0.1</jakarta.ejb-api.version>
+        <jakarta.authorization-api.version>3.0.0</jakarta.authorization-api.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>ee.omnifish</groupId>
+                <artifactId>omnibeans</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.omnifaces</groupId>
+                <artifactId>omniservices</artifactId>
+                <version>${omniservices.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.ejb</groupId>
+                <artifactId>jakarta.ejb-api</artifactId>
+                <version>${jakarta.ejb-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.enterprise</groupId>
+                <artifactId>jakarta.enterprise.cdi-api</artifactId>
+                <version>4.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.transaction</groupId>
+                <artifactId>jakarta.transaction-api</artifactId>
+                <version>2.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>6.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.authorization</groupId>
+                <artifactId>jakarta.authorization-api</artifactId>
+                <version>${jakarta.authorization-api.version}</version>
+            </dependency>
+
+            <!-- The Jakarta Authorization implementation of GlassFish, Piranha and Quarkus (its Exousia extension) -->
+            <dependency>
+                <groupId>org.glassfish.exousia</groupId>
+                <artifactId>exousia</artifactId>
+                <version>3.0.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>6.1.3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- The security API of Quarkus, for omnibeans-quarkus -->
+            <dependency>
+                <groupId>io.quarkus.security</groupId>
+                <artifactId>quarkus-security</artifactId>
+                <version>2.3.2</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.5.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.16.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.11.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.6.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.6.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>3.2.8</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+
+                <!-- Configure the jar with the binaries. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.5.1</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            </manifest>
+                            <manifestEntries>
+                                <URL>${project.url}</URL>
+                                <Extension-Name>${project.artifactId}</Extension-Name>
+                                <!-- module.name is set by the jar modules -->
+                                <Automatic-Module-Name>${module.name}</Automatic-Module-Name>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+
+                <!-- Configure the jar with the javadoc. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.12.0</version>
+                    <configuration>
+                        <quiet>true</quiet>
+                        <notimestamp>true</notimestamp>
+                        <splitindex>true</splitindex>
+                        <doctitle>${project.name} API documentation</doctitle>
+                        <links>
+                            <link>https://jakarta.ee/specifications/platform/11/apidocs/</link>
+                        </links>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.5.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.4.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.6.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>3.5.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>1.8.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>tidy-maven-plugin</artifactId>
+                    <version>1.4.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>2.23.0</version>
+                </plugin>
+
+                <!-- Release -->
+                <plugin>
+                    <groupId>org.cyclonedx</groupId>
+                    <artifactId>cyclonedx-maven-plugin</artifactId>
+                    <version>2.9.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>0.12.0</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <deploymentName>OmniBeans ${project.version}</deploymentName>
+                        <publishingServerId>central</publishingServerId>
+                        <!-- The tests are not published (maven.deploy.skip doesn't apply to this plugin) -->
+                        <excludeArtifacts>
+                            <artifact>test-pom</artifact>
+                            <artifact>async</artifact>
+                            <artifact>singleton</artifact>
+                            <artifact>exceptions</artifact>
+                            <artifact>transactions</artifact>
+                            <artifact>interceptors</artifact>
+                            <artifact>locking</artifact>
+                            <artifact>injection</artifact>
+                            <artifact>discovery</artifact>
+                            <artifact>transaction</artifact>
+                            <artifact>security</artifact>
+                        </excludeArtifacts>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>enforce-maven</id>
@@ -73,13 +293,119 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>3.6.0</version>
+                                    <version>3.9.9</version>
                                 </requireMavenVersion>
                             </rules>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Generate a "consumer pom" for the generated jars, without the parent -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <configuration>
+                    <flattenMode>ossrh</flattenMode>
+                </configuration>
+                <executions>
+                    <!-- enable flattening -->
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <!-- ensure proper cleanup -->
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Configure the jar with the sources. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Configure the jar with the javadoc. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>${docs.phase}</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <!-- Deployment of all modules: mvn clean deploy -Prelease -->
+    <profiles>
+        <profile>
+            <id>release</id>
+            <properties>
+                <docs.phase>package</docs.phase>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.cyclonedx</groupId>
+                        <artifactId>cyclonedx-maven-plugin</artifactId>
+                        <configuration>
+                            <!--
+                                The central-publishing-maven-plugin publishes instead of the deploy plugin, so don't
+                                skip projects the deploy plugin would skip
+                            -->
+                            <skipNotDeployed>false</skipNotDeployed>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>makeAggregateBom</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Signing with GPG is a requirement for a release deployment to Maven central. -->
+                    <plugin>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

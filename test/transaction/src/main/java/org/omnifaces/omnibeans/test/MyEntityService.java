@@ -16,16 +16,36 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
+/**
+ * A stateless bean that saves and loads {@link MyEntity} instances, in the default (required) transaction.
+ */
 @Stateless
 public class MyEntityService {
 
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * Creates the bean.
+     */
+    public MyEntityService() {
+    }
+
+    /**
+     * Saves an entity.
+     *
+     * @param entity the entity to save
+     */
     public void save(MyEntity entity ) {
         entityManager.persist(entity);
     }
 
+    /**
+     * Loads an entity.
+     *
+     * @param id the id of the entity
+     * @return the entity, or null if there is none
+     */
     public MyEntity load(int id) {
         return entityManager.find(MyEntity.class, id);
     }

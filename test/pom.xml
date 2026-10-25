@@ -13,22 +13,25 @@
 
     <name>OmniBeans Test Parent</name>
 
+    <!-- The transaction module is only built with the piranha profile, the security module with the quarkus one -->
     <modules>
         <module>async</module>
         <module>singleton</module>
-        <module>transaction</module>
+        <module>exceptions</module>
+        <module>transactions</module>
+        <module>interceptors</module>
+        <module>locking</module>
+        <module>injection</module>
+        <module>discovery</module>
     </modules>
 
     <properties>
-        <maven.compiler.release>11</maven.compiler.release>
-        <jakartaee.version>10.0.0</jakartaee.version>
+        <!-- The tests are not deployed -->
+        <maven.deploy.skip>true</maven.deploy.skip>
 
-        <!-- Essential Maven defaults. -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <piranha.version>23.3.0-SNAPSHOT</piranha.version>
-        <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+        <jakartaee.version>11.0.0</jakartaee.version>
+        <piranha.version>25.4.0-SNAPSHOT</piranha.version>
+        <arquillian-quarkus.version>1.1.1</arquillian-quarkus.version>
     </properties>
 
     <dependencyManagement>
@@ -37,7 +40,7 @@
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
-                <version>1.7.0.Alpha13</version>
+                <version>1.10.2.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -45,12 +48,13 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.8.1</version>
+                <version>6.1.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>jakarta.platform</groupId>
@@ -60,25 +64,15 @@
         </dependency>
 
         <!-- OmniFaces dependencies. -->
-        
         <dependency>
             <groupId>ee.omnifish</groupId>
             <artifactId>omnibeans</artifactId>
-            <version>${project.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omniservices</artifactId>
-            <version>0.4</version>
         </dependency>
-        
-        <dependency>
-            <groupId>org.omnifaces</groupId>
-            <artifactId>omniutils</artifactId>
-            <version>0.13</version>
-        </dependency>
-        
 
         <!-- Test dependencies. -->
         <dependency>
@@ -100,291 +94,54 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.arquillian.protocol</groupId>
-            <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.shrinkwrap.resolver</groupId>
-            <artifactId>shrinkwrap-resolver-depchain</artifactId>
-            <type>pom</type>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.sourceforge.htmlunit</groupId>
+            <groupId>org.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
-            <version>2.43.0</version>
+            <version>5.6.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.1.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.10.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.2.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.0.0-M2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0</version>
-                </plugin>
-                <!-- 
-               
-                   Downgraded to 3.0.0-M4 because 3.0.0-M5 does not find any
-                   tests in JWT TCK.
-                  
-                -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>3.0.0-M4</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>3.0.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>3.0.0-M1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.4.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.2.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.2.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M7</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>3.3.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>tidy-maven-plugin</artifactId>
-                    <version>1.1.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.8.1</version>
-                </plugin>
-
-                <!-- Make sure Eclipse itself also runs license format during build. -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>com.mycila</groupId>
-                                        <artifactId>license-maven-plugin</artifactId>
-                                        <versionRange>[3.0,)</versionRange>
-                                        <goals>
-                                            <goal>format</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <execute>
-                                            <runOnConfiguration>true</runOnConfiguration>
-                                        </execute>
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-
-            <!-- Add missing license headers to source files. -->
-            <plugin>
-                <groupId>com.mycila</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>3.0</version>
-                <configuration>
-                    <header>license.txt</header>
-                    <excludes>
-                        <exclude>*.*</exclude>
-                    </excludes>
-                    <mapping>
-                        <java>SLASHSTAR_STYLE</java>
-                    </mapping>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Configure the jar with the binaries. -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                        </manifest>
-                        <manifestEntries>
-                            <URL>${project.url}</URL>
-                            <Extension-Name>${project.artifactId}</Extension-Name>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-
-            <!-- Configure the jar with the sources. -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Configure the jar with the javadoc. -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <quiet>true</quiet>
-                    <notimestamp>true</notimestamp>
-                    <splitindex>true</splitindex>
-                    <doctitle>OmniServices API documentation</doctitle>
-                    <links>
-                        <link>https://javaee.github.io/javaee-spec/javadocs/</link>
-                    </links>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Configure snapshot deployment to Sonatype. -->
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.13</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>external.atlassian.jgitflow</groupId>
-                <artifactId>jgitflow-maven-plugin</artifactId>
-                <version>1.0-m5.1</version>
-                <configuration>
-                    <noDeploy>true</noDeploy>
-                    <enableFeatureVersions>true</enableFeatureVersions>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
     <profiles>
+        <!-- Quarkus. OmniBeans and OmniServices are loaded from the local Maven repository: run "mvn install" -->
         <profile>
-            <id>piranha-micro</id>
+            <id>quarkus</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            
-            <properties>
-                <piranha.offline>true</piranha.offline>
-            </properties>
-
+            <modules>
+                <!-- Needs Exousia's Quarkus extension, and a RunAsHandler, which Piranha doesn't have yet -->
+                <module>security</module>
+            </modules>
             <dependencies>
                 <dependency>
-                    <groupId>cloud.piranha.arquillian</groupId>
-                    <artifactId>piranha-arquillian-server</artifactId>
-                    <version>${piranha.version}</version>
+                    <groupId>ee.omnifish.arquillian</groupId>
+                    <artifactId>arquillian-quarkus-managed</artifactId>
+                    <version>${arquillian-quarkus.version}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
-            
-             <build>
+            <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <systemPropertyVariables>
-								<!-- TODO: set param to override omni-beans version -->
-                                <piranha.offline>${piranha.offline}</piranha.offline>
-                                <piranha.async.timeout>1000</piranha.async.timeout>
+                                <arquillian.quarkus.dependencies>
+                                    io.quarkus:quarkus-undertow,
+                                    io.quarkus:quarkus-narayana-jta,
+                                    io.quarkus:quarkus-smallrye-context-propagation,
+                                    ee.omnifish:omnibeans:${project.version},
+                                    org.omnifaces:omniservices:${omniservices.version},
+                                    jakarta.ejb:jakarta.ejb-api:${jakarta.ejb-api.version},
+                                    jakarta.authorization:jakarta.authorization-api:${jakarta.authorization-api.version}
+                                </arquillian.quarkus.dependencies>
+                                <!-- Quarkus rejects @jakarta.ejb.Singleton unless this check is off -->
+                                <arquillian.quarkus.buildProperties>quarkus.arc.detect-wrong-annotations=false</arquillian.quarkus.buildProperties>
+                                <!-- ArC intercepts calls on this, Weld doesn't (TransactionsTest.selfInvocation) -->
+                                <omnibeans.test.selfInvocationIntercepted>true</omnibeans.test.selfInvocationIntercepted>
+                                <!-- Quarkus creates servlets as beans, Piranha from their unmodified class (InjectionTest) -->
+                                <omnibeans.test.servletEjbInjected>true</omnibeans.test.servletEjbInjected>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
@@ -392,24 +149,46 @@
             </build>
         </profile>
 
+        <!--
+            Piranha Micro, in process. Until they're upstream, this needs a local Piranha build with the fixes of branch
+            weld-early-start, without which @Transactional doesn't work.
+        -->
         <profile>
-            <id>release</id>
+            <id>piranha</id>
+            <modules>
+                <!-- Needs Jakarta Persistence -->
+                <module>transaction</module>
+            </modules>
+            <dependencies>
+                <dependency>
+                    <groupId>cloud.piranha.arquillian</groupId>
+                    <artifactId>piranha-arquillian-server</artifactId>
+                    <version>${piranha.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.shrinkwrap.resolver</groupId>
+                    <artifactId>shrinkwrap-resolver-depchain</artifactId>
+                    <version>3.3.7</version>
+                    <type>pom</type>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
-                    <!-- Signing with GPG is a requirement for a release deployment (to Maven central) -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.0.1</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <piranha.offline>true</piranha.offline>
+                                <piranha.rootIsWarName>true</piranha.rootIsWarName>
+                                <!-- Replaces the OmniBeans and OmniServices versions that Micro comes with -->
+                                <piranha.dependencies>ee.omnifish:omnibeans:${project.version},org.omnifaces:omniservices:${omniservices.version}</piranha.dependencies>
+                                <omnibeans.test.selfInvocationIntercepted>false</omnibeans.test.selfInvocationIntercepted>
+                                <omnibeans.test.servletEjbInjected>false</omnibeans.test.servletEjbInjected>
+                            </systemPropertyVariables>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

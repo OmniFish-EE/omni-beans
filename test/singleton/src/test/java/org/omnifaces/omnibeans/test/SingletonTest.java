@@ -28,8 +28,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.WebClient;
+import org.htmlunit.TextPage;
+import org.htmlunit.WebClient;
 
  @ExtendWith(ArquillianExtension.class)
  public class SingletonTest {
@@ -73,7 +73,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 
          System.out.println("Content: \n" + page.getContent());
 
-         // assertTrue(page.getContent().contains("singleton 2 outcome: foo bar"));
+         assertTrue(page.getContent().contains("singleton 2 outcome: foo bar"));
      }
 
 

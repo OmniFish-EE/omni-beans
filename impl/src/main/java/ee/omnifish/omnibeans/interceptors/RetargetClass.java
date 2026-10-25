@@ -1,0 +1,81 @@
+/*
+ * Copyright 2022 OmniFish
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+package ee.omnifish.omnibeans.interceptors;
+
+import static java.lang.annotation.ElementType.CONSTRUCTOR;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import org.omnifaces.services.lock.Lock;
+
+import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.enterprise.util.Nonbinding;
+import jakarta.interceptor.InterceptorBinding;
+
+/**
+ * Binds the interceptors that {@code @Interceptors} on a class of a session bean lists, which OmniBeans maps to
+ * this. They run after the OmniServices and transactional interceptors.
+ */
+@InterceptorBinding
+@Target({ TYPE, METHOD, CONSTRUCTOR })
+@Retention(RUNTIME)
+public @interface RetargetClass {
+
+    /**
+     * An ordered list of interceptors.
+     *
+     * @return an array representing the interceptor classes
+     */
+    @Nonbinding Class<?>[] interceptorClasses() default {};
+
+    /**
+     * Supports inline instantiation of the {@link RetargetClass} annotation.
+     *
+     * @serial exclude
+     */
+    public static final class Literal extends AnnotationLiteral<RetargetClass> implements RetargetClass {
+
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * Instance of the Literal annotation.
+         */
+        public static final Literal INSTANCE = of(new Class<?>[0]);
+
+        private final Class<?>[] interceptorClasses;
+
+        /**
+         * Instance of the {@link RetargetClass} annotation.
+         *
+         * @param interceptorClasses the interceptor classes, in order
+         * @return instance of the {@link RetargetClass} annotation
+         */
+        public static Literal of(Class<?>[] interceptorClasses) {
+            return new Literal(interceptorClasses);
+        }
+
+        private Literal(Class<?>[] interceptorClasses) {
+            this.interceptorClasses = interceptorClasses;
+        }
+
+        @Override
+        public Class<?>[] interceptorClasses() {
+            return interceptorClasses;
+        }
+
+    }
+}

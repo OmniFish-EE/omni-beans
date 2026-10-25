@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ee.omnifish</groupId>
+        <artifactId>test-pom</artifactId>
+        <version>0.4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>security</artifactId>
+    <packaging>war</packaging>
+
+    <name>Session bean security test</name>
+
+    <properties>
+        <exousia-quarkus.version>3.0.2</exousia-quarkus.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <!-- Quarkus only (see the quarkus profile of the parent): with Jakarta Authorization from Exousia -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <arquillian.quarkus.dependencies>
+                            org.glassfish.exousia:quarkus-exousia:${exousia-quarkus.version},
+                            io.quarkus:quarkus-elytron-security-properties-file,
+                            io.quarkus:quarkus-narayana-jta,
+                            io.quarkus:quarkus-smallrye-context-propagation,
+                            ee.omnifish:omnibeans:${project.version},
+                            ee.omnifish:omnibeans-quarkus:${project.version},
+                            org.omnifaces:omniservices:${omniservices.version},
+                            jakarta.ejb:jakarta.ejb-api:${jakarta.ejb-api.version}
+                        </arquillian.quarkus.dependencies>
+                        <arquillian.quarkus.buildProperties>
+                            quarkus.arc.detect-wrong-annotations=false
+                            quarkus.security.users.embedded.enabled=true
+                            quarkus.http.auth.basic=true
+                        </arquillian.quarkus.buildProperties>
+                        <!-- The users, with their groups as roles. User runner is the identity of run-as role runner -->
+                        <arquillian.quarkus.systemProperties>
+                            quarkus.security.users.embedded.plain-text=true
+                            quarkus.security.users.embedded.users.alice=alice
+                            quarkus.security.users.embedded.roles.alice=caller,manager,auditor
+                            quarkus.security.users.embedded.users.bob=bob
+                            quarkus.security.users.embedded.roles.bob=caller
+                            quarkus.security.users.embedded.users.runner=runner
+                            quarkus.security.users.embedded.roles.runner=runner
+                        </arquillian.quarkus.systemProperties>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
