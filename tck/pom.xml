@@ -5,7 +5,7 @@
     <parent>
         <groupId>ee.omnifish</groupId>
         <artifactId>omnibeans-parent</artifactId>
-        <version>0.4-SNAPSHOT</version>
+        <version>0.4</version>
     </parent>
 
     <artifactId>omnibeans-tck</artifactId>
@@ -14,12 +14,11 @@
     <name>OmniBeans - Jakarta Enterprise Beans TCK</name>
     <description>
         Runs the Enterprise Beans Lite tests of the (binary) Jakarta Enterprise Beans TCK against OmniBeans, on Quarkus
-        (the default) or on Piranha (-Ppiranha): install downloads and installs the TCK, run runs it. Not part of the
-        regular build, as a full run builds hundreds of applications.
+        (the default) or on Piranha (-Ppiranha). The TCK's artifacts come from Maven Central. Not part of the regular
+        build, as it builds an application per test class.
     </description>
 
     <modules>
-        <module>install</module>
         <module>run</module>
     </modules>
 

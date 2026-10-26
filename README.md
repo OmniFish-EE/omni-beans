@@ -90,15 +90,15 @@ Quarkus only, and needs Exousia's Quarkus extension (`org.glassfish.exousia:quar
 
 `tck` runs the Enterprise Beans Lite tests of the Jakarta Enterprise Beans TCK (11.0.3) against OmniBeans: the tests
 the TCK tags `web` (required in the Web Profile). For now only in the servlet vehicle; `-Dtck.skipOtherVehicles=false`
-adds the other web vehicles (servlet filter, JSP and Faces). It's not part of the regular build, as a full run builds
-hundreds of applications:
+adds the other web vehicles (servlet filter, JSP and Faces). It's not part of the regular build, as it builds an
+application per test class (89 in the servlet vehicle), which takes about half an hour on Quarkus in JVM mode:
 
 ```
 mvn install -f tck              # Quarkus
 mvn install -f tck -Ppiranha    # Piranha Micro, in process (needs the local Piranha build, see above)
 ```
 
-`tck/install` downloads the TCK and installs its jars; `mvn install -f tck/run` skips that. The vehicles are called on
+The TCK's jars (`jakarta.tck:ejb30` and `ejb32`) come from Maven Central. The vehicles are called on
 port 8080 (`webServerPort` in `ts.jte`). On Quarkus, each test archive is built into a Quarkus application with
 OmniBeans; the JSP and servlet filter vehicles also get WaSP, the Faces vehicle MyFaces.
 
