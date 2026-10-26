@@ -33,7 +33,7 @@
     <parent>
         <groupId>ee.omnifish</groupId>
         <artifactId>omnibeans-tck</artifactId>
-        <version>0.4</version>
+        <version>0.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>omnibeans-tck-run</artifactId>
